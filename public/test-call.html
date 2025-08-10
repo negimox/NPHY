@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Scam Shield - Browser Test</title>
+    <script src="https://sdk.twilio.com/js/client/releases/1.14.1/twilio.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px 0;
+      }
+      .btn {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 5px;
+        transition: all 0.3s ease;
+      }
+      .btn:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+      }
+      .btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .status {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-family: monospace;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      input[type="text"] {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        width: 300px;
+        font-size: 16px;
+      }
+      .success {
+        color: #4caf50;
+      }
+      .error {
+        color: #f44336;
+      }
+      .warning {
+        color: #ff9800;
+      }
+      .info {
+        color: #2196f3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🛡️ Voice Scam Shield - Browser Test</h1>
+      <p>
+        Test your Voice Scam Shield system directly from your browser using
+        Twilio Voice SDK
+      </p>
+
+      <div class="input-group">
+        <label for="phoneNumber">📞 Phone Number to Call:</label><br />
+        <input
+          type="text"
+          id="phoneNumber"
+          placeholder="+12182204759"
+          value="+12182204759"
+        />
+        <small>Your Voice Scam Shield number</small>
+      </div>
+
+      <div>
+        <button class="btn" id="connectBtn" onclick="connectDevice()">
+          🔌 Connect Browser
+        </button>
+        <button class="btn" id="callBtn" onclick="makeCall()" disabled>
+          📞 Make Test Call
+        </button>
+        <button class="btn" id="hangupBtn" onclick="hangupCall()" disabled>
+          📴 Hang Up
+        </button>
+      </div>
+
+      <div class="status" id="status">
+        📋 Status: Ready to connect. Click "Connect Browser" to start.
+      </div>
+
+      <div class="container">
+        <h3>🎯 Testing Instructions:</h3>
+        <ol>
+          <li>
+            <strong>Connect Browser:</strong> Click "Connect Browser" to
+            initialize Twilio Voice SDK
+          </li>
+          <li>
+            <strong>Make Call:</strong> Call your Voice Scam Shield number to
+            test the system
+          </li>
+          <li>
+            <strong>Listen:</strong> You should hear the security message from
+            your system
+          </li>
+          <li>
+            <strong>Monitor:</strong> Watch your server logs for real-time
+            detection
+          </li>
+        </ol>
+      </div>
+
+      <div class="container">
+        <h3>⚙️ Setup Required:</h3>
+        <p>To use this browser test, you need to:</p>
+        <ol>
+          <li>Create a TwiML App in Twilio Console</li>
+          <li>Generate capability tokens on your server</li>
+          <li>Configure voice URL to point to your webhook</li>
+        </ol>
+        <p><strong>Or use the programmatic tests instead:</strong></p>
+        <pre
+          style="
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+          "
+        >
+# Self-test (recommended)
+node self-test-call.js
+
+# Buy second number for testing
+node buy-test-number.js
+
+# Test with verified India number
+node india-number-test.js verify +91XXXXXXXXXX
+node india-number-test.js call +91XXXXXXXXXX
+            </pre
+        >
+      </div>
+    </div>
+
+    <script>
+      let device;
+      let connection;
+
+      function log(message, type = "info") {
+        const status = document.getElementById("status");
+        const timestamp = new Date().toLocaleTimeString();
+        const icon =
+          {
+            info: "📋",
+            success: "✅",
+            error: "❌",
+            warning: "⚠️",
+          }[type] || "📋";
+
+        status.innerHTML = `${icon} [${timestamp}] ${message}`;
+        status.className = `status ${type}`;
+        console.log(`[${type.toUpperCase()}] ${message}`);
+      }
+
+      async function connectDevice() {
+        try {
+          log("Connecting to Twilio...", "info");
+
+          // In a real implementation, you'd get this token from your server
+          // For now, show instructions
+          log(
+            "❌ Capability token required! See setup instructions below.",
+            "error"
+          );
+
+          // Uncomment when you have capability token endpoint:
+          /*
+                const response = await fetch('/api/token');
+                const data = await response.json();
+
+                device = new Twilio.Device(data.token);
+
+                device.on('ready', function() {
+                    log('Browser connected successfully!', 'success');
+                    document.getElementById('connectBtn').disabled = true;
+                    document.getElementById('callBtn').disabled = false;
+                });
+
+                device.on('error', function(error) {
+                    log(`Connection error: ${error.message}`, 'error');
+                });
+
+                device.on('connect', function(conn) {
+                    connection = conn;
+                    log('Call connected!', 'success');
+                    document.getElementById('callBtn').disabled = true;
+                    document.getElementById('hangupBtn').disabled = false;
+                });
+
+                device.on('disconnect', function() {
+                    log('Call ended', 'info');
+                    document.getElementById('callBtn').disabled = false;
+                    document.getElementById('hangupBtn').disabled = true;
+                    connection = null;
+                });
+                */
+        } catch (error) {
+          log(`Failed to connect: ${error.message}`, "error");
+        }
+      }
+
+      function makeCall() {
+        const phoneNumber = document.getElementById("phoneNumber").value;
+
+        if (!phoneNumber) {
+          log("Please enter a phone number", "warning");
+          return;
+        }
+
+        try {
+          log(`Calling ${phoneNumber}...`, "info");
+
+          // In real implementation:
+          // connection = device.connect({ To: phoneNumber });
+
+          log(
+            "⚠️ Browser calling not fully configured. Use programmatic tests instead.",
+            "warning"
+          );
+        } catch (error) {
+          log(`Call failed: ${error.message}`, "error");
+        }
+      }
+
+      function hangupCall() {
+        if (connection) {
+          connection.disconnect();
+          log("Hanging up...", "info");
+        }
+      }
+    </script>
+  </body>
+</html>

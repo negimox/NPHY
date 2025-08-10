@@ -1,0 +1,48 @@
+{
+  "name": "scam-detection-demo",
+  "version": "1.0.0",
+  "description": "Real-time scam detection system for video calls using ElevenLabs and Hugging Face APIs",
+  "main": "demo_main.js",
+  "scripts": {
+    "demo": "node demo_main.js full",
+    "demo:quick": "node demo_main.js quick",
+    "demo:silent": "node demo_main.js full --no-audio",
+    "demo:verbose": "node demo_main.js full --verbose",
+    "test:audio": "node audio_processor.js",
+    "test:analyzer": "node scam_analyzer.js",
+    "test:alerts": "node alert_system.js",
+    "clean": "node demo_main.js clean",
+    "setup": "node setup.js",
+    "help": "node demo_main.js --help"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "groq-sdk": "^0.3.1",
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "keywords": [
+    "scam-detection",
+    "voice-analysis",
+    "elevenlabs",
+    "huggingface",
+    "fraud-prevention",
+    "zoom-integration",
+    "real-time-analysis"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "your-repository-url"
+  },
+  "bugs": {
+    "url": "your-repository-url/issues"
+  },
+  "homepage": "your-repository-url#readme"
+}
