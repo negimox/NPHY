@@ -70,11 +70,7 @@ pip install torch numpy scipy librosa pandas sklearn
 ```bash
 # Required
 export GROQ_API_KEY="your-groq-api-key"
-
-# Optional (for enhanced features)
 export XI_API_KEY="your-elevenlabs-api-key"
-export TRUECALLER_API_KEY="your-truecaller-api-key"
-export NOMOROBO_API_KEY="your-nomorobo-api-key"
 ```
 
 ### Directory Structure
