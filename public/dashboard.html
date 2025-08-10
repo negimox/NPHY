@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Scam Shield - Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #2d3748;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .header p {
+        color: #718096;
+        font-size: 1.1em;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-card .icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .stat-card .value {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .stat-card .label {
+        color: #718096;
+        font-size: 1.1em;
+      }
+
+      .high-risk {
+        color: #e53e3e;
+      }
+      .medium-risk {
+        color: #dd6b20;
+      }
+      .low-risk {
+        color: #38a169;
+      }
+      .total {
+        color: #3182ce;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .panel h2 {
+        color: #2d3748;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .alerts-container {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .alert-item {
+        background: #f7fafc;
+        border-left: 4px solid;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 0 10px 10px 0;
+        transition: all 0.3s ease;
+      }
+
+      .alert-item:hover {
+        background: #edf2f7;
+        transform: translateX(5px);
+      }
+
+      .alert-item.high {
+        border-left-color: #e53e3e;
+      }
+      .alert-item.medium {
+        border-left-color: #dd6b20;
+      }
+      .alert-item.low {
+        border-left-color: #38a169;
+      }
+
+      .alert-header {
+        display: flex;
+        justify-content: between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .alert-title {
+        font-weight: 600;
+        color: #2d3748;
+        flex: 1;
+      }
+
+      .alert-time {
+        color: #718096;
+        font-size: 0.9em;
+      }
+
+      .alert-details {
+        color: #4a5568;
+        font-size: 0.95em;
+        line-height: 1.4;
+      }
+
+      .alert-meta {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #718096;
+      }
+
+      .system-status {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #f7fafc;
+        border-radius: 8px;
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .status-indicator.online {
+        background: #38a169;
+      }
+      .status-indicator.offline {
+        background: #e53e3e;
+      }
+      .status-indicator.warning {
+        background: #dd6b20;
+      }
+
+      .refresh-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .refresh-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .activity-feed {
+        grid-column: 1 / -1;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+      }
+
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        color: #718096;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e2e8f0;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 15px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .no-data {
+        text-align: center;
+        color: #718096;
+        padding: 40px;
+        font-style: italic;
+      }
+
+      @media (max-width: 768px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .header h1 {
+          font-size: 2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🛡️ Voice Scam Shield Dashboard</h1>
+        <p>Real-time monitoring and detection system</p>
+        <button class="refresh-btn" onclick="refreshDashboard()">
+          🔄 Refresh Data
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="icon">🚨</div>
+          <div class="value high-risk" id="high-risk-count">5</div>
+          <div class="label">High Risk Calls</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">⚠️</div>
+          <div class="value medium-risk" id="medium-risk-count">0</div>
+          <div class="label">Medium Risk Calls</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">✅</div>
+          <div class="value low-risk" id="low-risk-count">1</div>
+          <div class="label">Low Risk Calls</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">📞</div>
+          <div class="value total" id="total-calls">6</div>
+          <div class="label">Total Calls Today</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // Initialize Socket.IO connection
+      const socket = io();
+
+      // Dashboard data
+      let dashboardData = {
+        alerts: [],
+        metrics: {},
+        systemHealth: {},
+        activity: [],
+      };
+
+      // Connect to dashboard updates
+      socket.emit("subscribe-dashboard");
+
+      // Listen for real-time updates
+      socket.on("dashboard-update", (data) => {
+        console.log("Dashboard update received:", data);
+        updateDashboard(data);
+      });
+
+      socket.on("alert-generated", (alert) => {
+        console.log("New alert received:", alert);
+        addAlert(alert);
+      });
+
+      socket.on("call-update", (callData) => {
+        console.log("Call update received:", callData);
+        addActivity(
+          `📞 Call ${callData.status}: ${callData.from}`,
+          callData.timestamp
+        );
+      });
+
+      // Initial data load
+      async function loadDashboardData() {
+        try {
+          const response = await fetch("/dashboard/data");
+          const data = await response.json();
+          dashboardData = data;
+          updateDashboard(data);
+        } catch (error) {
+          console.error("Error loading dashboard data:", error);
+          showError("Failed to load dashboard data");
+        }
+      }
+
+      function updateDashboard(data) {
+        updateStats(data.metrics || {});
+        updateAlerts(data.recentAlerts || []);
+        updateSystemStatus(data.systemHealth || {});
+        updateActivity(data.activity || []);
+      }
+
+      function updateStats(metrics) {
+        document.getElementById("high-risk-count").textContent =
+          metrics.highRiskCalls || 0;
+        document.getElementById("medium-risk-count").textContent =
+          metrics.mediumRiskCalls || 0;
+        document.getElementById("low-risk-count").textContent =
+          metrics.lowRiskCalls || 0;
+        document.getElementById("total-calls").textContent =
+          metrics.totalCalls || 0;
+      }
+
+      function updateAlerts(alerts) {
+        const container = document.getElementById("alerts-container");
+
+        if (!alerts || alerts.length === 0) {
+          container.innerHTML = '<div class="no-data">No recent alerts</div>';
+          return;
+        }
+
+        const alertsHtml = alerts
+          .map(
+            (alert) => `
+                <div class="alert-item ${alert.severity?.toLowerCase() || "medium"}">
+                    <div class="alert-header">
+                        <div class="alert-title">${alert.title || "Scam Detected"}</div>
+                        <div class="alert-time">${formatTime(alert.timestamp)}</div>
+                    </div>
+                    <div class="alert-details">${alert.message || alert.description || "No details available"}</div>
+                    <div class="alert-meta">
+                        <span>📞 ${alert.callerNumber || "Unknown"}</span>
+                        <span>🎯 Risk: ${(alert.riskScore * 100).toFixed(1)}%</span>
+                        <span>🔍 Type: ${alert.scamType || "Unknown"}</span>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        container.innerHTML = alertsHtml;
+      }
+
+      function updateSystemStatus(health) {
+        const container = document.getElementById("system-status");
+
+        const status = [
+          {
+            name: "Scam Analysis",
+            status: health.scamAnalysis ? "online" : "offline",
+          },
+          {
+            name: "Deepfake Detection",
+            status: health.deepfakeDetection ? "online" : "offline",
+          },
+          {
+            name: "Phone Verification",
+            status: health.phoneVerification ? "online" : "offline",
+          },
+          {
+            name: "Alert System",
+            status: health.alertSystem ? "online" : "offline",
+          },
+          {
+            name: "Twilio Connection",
+            status: health.twilioConnection ? "online" : "offline",
+          },
+          { name: "Database", status: health.database ? "online" : "warning" },
+        ];
+
+        const statusHtml = status
+          .map(
+            (item) => `
+                <div class="status-item">
+                    <div class="status-indicator ${item.status}"></div>
+                    <span>${item.name}</span>
+                </div>
+            `
+          )
+          .join("");
+
+        container.innerHTML = statusHtml;
+      }
+
+      function updateActivity(activities) {
+        const container = document.getElementById("activity-feed");
+
+        if (!activities || activities.length === 0) {
+          container.innerHTML = '<div class="no-data">No recent activity</div>';
+          return;
+        }
+
+        const activityHtml = activities
+          .map(
+            (activity) => `
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: ${getActivityColor(activity.type)}">
+                        ${getActivityIcon(activity.type)}
+                    </div>
+                    <div>
+                        <div>${activity.message}</div>
+                        <div style="color: #718096; font-size: 0.9em;">${formatTime(activity.timestamp)}</div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        container.innerHTML = activityHtml;
+      }
+
+      function addAlert(alert) {
+        // Add new alert to the beginning of the alerts array
+        dashboardData.alerts = dashboardData.alerts || [];
+        dashboardData.alerts.unshift(alert);
+
+        // Keep only the last 20 alerts
+        dashboardData.alerts = dashboardData.alerts.slice(0, 20);
+
+        // Update alerts display
+        updateAlerts(dashboardData.alerts);
+
+        // Update metrics
+        updateStats(calculateMetrics(dashboardData.alerts));
+
+        // Add to activity feed
+        addActivity(
+          `🚨 ${alert.title || "Scam Alert"}: ${alert.callerNumber}`,
+          alert.timestamp
+        );
+      }
+
+      function addActivity(message, timestamp) {
+        dashboardData.activity = dashboardData.activity || [];
+        dashboardData.activity.unshift({
+          message,
+          timestamp: timestamp || new Date().toISOString(),
+          type: message.includes("🚨")
+            ? "alert"
+            : message.includes("📞")
+              ? "call"
+              : "system",
+        });
+
+        // Keep only the last 50 activities
+        dashboardData.activity = dashboardData.activity.slice(0, 50);
+
+        updateActivity(dashboardData.activity);
+      }
+
+      function calculateMetrics(alerts) {
+        const today = new Date().toDateString();
+        const todayAlerts = alerts.filter(
+          (alert) => new Date(alert.timestamp).toDateString() === today
+        );
+
+        return {
+          highRiskCalls: todayAlerts.filter(
+            (a) => a.severity === "HIGH" || a.riskScore > 0.8
+          ).length,
+          mediumRiskCalls: todayAlerts.filter(
+            (a) =>
+              a.severity === "MEDIUM" ||
+              (a.riskScore > 0.5 && a.riskScore <= 0.8)
+          ).length,
+          lowRiskCalls: todayAlerts.filter(
+            (a) => a.severity === "LOW" || a.riskScore <= 0.5
+          ).length,
+          totalCalls: todayAlerts.length,
+        };
+      }
+
+      function getActivityColor(type) {
+        switch (type) {
+          case "alert":
+            return "#e53e3e";
+          case "call":
+            return "#3182ce";
+          case "system":
+            return "#38a169";
+          default:
+            return "#718096";
+        }
+      }
+
+      function getActivityIcon(type) {
+        switch (type) {
+          case "alert":
+            return "🚨";
+          case "call":
+            return "📞";
+          case "system":
+            return "⚙️";
+          default:
+            return "📊";
+        }
+      }
+
+      function formatTime(timestamp) {
+        if (!timestamp) return "Unknown";
+        return new Date(timestamp).toLocaleString();
+      }
+
+      function showError(message) {
+        console.error(message);
+        // You could add a toast notification here
+      }
+
+      function refreshDashboard() {
+        const btn = document.querySelector(".refresh-btn");
+        btn.textContent = "🔄 Refreshing...";
+        btn.disabled = true;
+
+        loadDashboardData().finally(() => {
+          btn.textContent = "🔄 Refresh Data";
+          btn.disabled = false;
+        });
+      }
+
+      // Load initial data when page loads
+      window.addEventListener("load", loadDashboardData);
+
+      // Auto-refresh every 30 seconds
+      setInterval(loadDashboardData, 30000);
+    </script>
+  </body>
+</html>
